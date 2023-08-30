@@ -1,0 +1,72 @@
+
+CREATE TABLE DEPT (
+    DEPTNO INT PRIMARY KEY,
+    DNAME VARCHAR(50) NOT NULL,
+    LOC VARCHAR(40)
+);
+
+CREATE TABLE EMP (
+    EMPNO INT PRIMARY KEY,
+    ENAME VARCHAR(50) NOT NULL,
+    JOB CHAR(20) NOT NULL,
+    MGR INT,
+    FOREIGN KEY (MGR) REFERENCES EMP(EMPNO),
+    HIREDATE DATE NOT NULL,
+    SAL INT,
+    COMM INT,
+    DEPTNO INT,
+    FOREIGN KEY (DEPTNO) REFERENCES DEPT(DEPTNO)
+);
+
+
+
+
+INSERT INTO DEPT (DEPTNO, DNAME, LOC) 
+VALUES 
+    (10, 'ACCOUNTING', 'NEW YORK'),
+    (20, 'RESEARCH', 'DALLAS'),
+    (30, 'SALES', 'CHICAGO'),
+    (40, 'OPERATIONS', 'BOSTON');
+
+
+
+
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO) 
+VALUES 
+    (7369, 'SMITH', 'MANAGER', NULL, '1980-12-17', 800, NULL, 20),
+    (7499, 'ALLEN', 'SALESMAN', 7369, '1981-02-20', 1600, 300, 30),
+    (7521, 'WARD', 'CLERK', 7369, '1981-02-22', 1250, 500, 30);
+
+
+    
+mysql> INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+    -> VALUES
+    ->     (7369, 'SMITH', 'MANAGER', NULL, '1980-12-17', 800, NULL, 20),
+    ->     (7499, 'ALLEN', 'SALESMAN', 7369, '1981-02-20', 1600, 300, 30),
+    ->     (7521, 'WARD', 'CLERK', 7369, '1981-02-22', 1250, 500, 30);
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+
+mysql> SELECT * FROM DEPT;
++--------+------------+----------+
+| DEPTNO | DNAME      | LOC      |
++--------+------------+----------+
+|     10 | ACCOUNTING | NEW YORK |
+|     20 | RESEARCH   | DALLAS   |
+|     30 | SALES      | CHICAGO  |
+|     40 | OPERATIONS | BOSTON   |
++--------+------------+----------+
+4 rows in set (0.00 sec)
+
+
+
+mysql>     SELECT * FROM EMP;
++-------+-------+----------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB      | MGR  | HIREDATE   | SAL  | COMM | DEPTNO |
++-------+-------+----------+------+------------+------+------+--------+
+|  7369 | SMITH | MANAGER  | NULL | 1980-12-17 |  800 | NULL |     20 |
+|  7499 | ALLEN | SALESMAN | 7369 | 1981-02-20 | 1600 |  300 |     30 |
+|  7521 | WARD  | CLERK    | 7369 | 1981-02-22 | 1250 |  500 |     30 |
++-------+-------+----------+------+------------+------+------+--------+
+3 rows in set (0.00 sec)

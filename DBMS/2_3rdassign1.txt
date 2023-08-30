@@ -1,0 +1,137 @@
+CREATE TABLE DEPT (
+    DEPTNO INT PRIMARY KEY,
+    DNAME VARCHAR(50) NOT NULL,
+    LOC VARCHAR(40)
+);
+
+CREATE TABLE EMP (
+    EMPNO INT PRIMARY KEY,
+    ENAME VARCHAR(50) NOT NULL,
+    JOB CHAR(20) NOT NULL,
+    MGR INT,
+    FOREIGN KEY (MGR) REFERENCES EMP(EMPNO),
+    HIREDATE DATE NOT NULL,
+    SAL INT,
+    COMM INT,
+    DEPTNO INT,
+    FOREIGN KEY (DEPTNO) REFERENCES DEPT(DEPTNO)
+);
+
+
+
+
+INSERT INTO DEPT (DEPTNO, DNAME, LOC) 
+VALUES 
+    (10, 'ACCOUNTING', 'NEW YORK'),
+    (20, 'RESEARCH', 'DALLAS'),
+    (30, 'SALES', 'CHICAGO'),
+    (40, 'OPERATIONS', 'BOSTON');
+
+
+
+
+INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO) 
+VALUES 
+    (7369, 'SMITH', 'MANAGER', NULL, '1980-12-17', 800, NULL, 20),
+    (7499, 'ALLEN', 'SALESMAN', 7369, '1981-02-20', 1600, 300, 30),
+    (7521, 'WARD', 'CLERK', 7369, '1981-02-22', 1250, 500, 30);
+
+
+    
+mysql> INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+    -> VALUES
+    ->     (7369, 'SMITH', 'MANAGER', NULL, '1980-12-17', 800, NULL, 20),
+    ->     (7499, 'ALLEN', 'SALESMAN', 7369, '1981-02-20', 1600, 300, 30),
+    ->     (7521, 'WARD', 'CLERK', 7369, '1981-02-22', 1250, 500, 30);
+
+
+Perform following operations : 
+
+1) List the number of employees and average salary for employees in department 20.
+
+2) List name, salary and PF amount of all employees. (PF is calculated as 10% of
+
+basic salary)
+
+3) List the employee details in the ascending order of their basic salary.
+
+4) List the employee name and hire date in the descending order of the hire date.
+
+5) List employee name, salary, PF, HRA, DA and gross; order the results in the
+
+ascending order of gross. HRA is 50% of the salary and DA is 30% of the salary,
+
+6) List the department numbers and number of employees in each department. 7) Increment the Salary of salesman by 10% of basic salary.
+
+8) List the total salary, maximum and minimum salary and average salary of the employees, for department 20.
+
+9) List the employees whose names contains 3" letter as T.
+
+10) List the maximum salary paid to a salesman.
+
+11) Increase the salary of salesman by 10% of their current salary,
+
+
+
+
+
+
+
+1)SELECT COUNT(EMPNO) AS num_employees, AVG(SAL) AS avg_salary
+FROM EMP
+WHERE DEPTNO = 20;
++---------------+------------+
+| num_employees | avg_salary |
++---------------+------------+
+|             1 |   800.0000 |
++---------------+------------+
+1 row in set (0.01 sec)
+
+
+2)mysql> SELECT ENAME, SAL, SAL * 0.1 AS PF
+    -> FROM EMP;
++-------+------+-------+
+| ENAME | SAL  | PF    |
++-------+------+-------+
+| SMITH |  800 |  80.0 |
+| ALLEN | 1600 | 160.0 |
+| WARD  | 1250 | 125.0 |
++-------+------+-------+
+3 rows in set (0.00 sec)
+
+
+3)mysql> SELECT EMPNO, ENAME, SAL
+    -> FROM EMP
+    -> ORDER BY SAL ASC;
++-------+-------+------+
+| EMPNO | ENAME | SAL  |
++-------+-------+------+
+|  7369 | SMITH |  800 |
+|  7521 | WARD  | 1250 |
+|  7499 | ALLEN | 1600 |
++-------+-------+------+
+3 rows in set (0.00 sec)
+
+4)mysql> SELECT ENAME, HIREDATE
+    -> FROM EMP
+    -> ORDER BY HIREDATE DESC;
++-------+------------+
+| ENAME | HIREDATE   |
++-------+------------+
+| WARD  | 1981-02-22 |
+| ALLEN | 1981-02-20 |
+| SMITH | 1980-12-17 |
++-------+------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT ENAME, SAL, SAL * 0.1 AS PF, SAL * 0.5 AS HRA, SAL * 0.3 AS DA, (SAL + (SAL * 0.1) + (SAL * 0.5) + (SAL * 0.3)) AS gross
+    -> FROM EMP
+    -> ORDER BY gross ASC;
++-------+------+-------+-------+-------+--------+
+| ENAME | SAL  | PF    | HRA   | DA    | gross  |
++-------+------+-------+-------+-------+--------+
+| SMITH |  800 |  80.0 | 400.0 | 240.0 | 1520.0 |
+| WARD  | 1250 | 125.0 | 625.0 | 375.0 | 2375.0 |
+| ALLEN | 1600 | 160.0 | 800.0 | 480.0 | 3040.0 |
++-------+------+-------+-------+-------+--------+
+3 rows in set (0.00 sec)

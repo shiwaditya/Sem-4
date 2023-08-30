@@ -1,0 +1,104 @@
+mysql> create database dbms;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use dbms;
+Database changed
+
+CREATE TABLE Suppliers (
+    S_Id INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Status VARCHAR(20),
+    City VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Parts (
+    P_Id INT PRIMARY KEY,
+    Pname VARCHAR(50) NOT NULL,
+    Colour VARCHAR(20),
+    Weight DECIMAL(10,2),
+    City VARCHAR(50) NOT NULL,
+    CONSTRAINT check_weight CHECK (Weight >= 0)
+);
+
+CREATE TABLE Projects (
+    J_Id INT PRIMARY KEY,
+    Jname VARCHAR(50) NOT NULL,
+    City VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Shipment (
+    S_Id INT NOT NULL,
+    P_Id INT NOT NULL,
+    J_Id INT NOT NULL,
+    Qty INT,
+    CONSTRAINT pk_shipment PRIMARY KEY (S_Id, P_Id, J_Id),
+    CONSTRAINT fk_shipment_supplier FOREIGN KEY (S_Id) REFERENCES Suppliers (S_Id),
+    CONSTRAINT fk_shipment_part FOREIGN KEY (P_Id) REFERENCES Parts (P_Id),
+    CONSTRAINT fk_shipment_project FOREIGN KEY (J_Id) REFERENCES Projects (J_Id),
+    CONSTRAINT check_qty CHECK (Qty >= 0)
+);
+
+INSERT INTO Suppliers (S_Id, Name, Status, City) VALUES
+(1, 'P1', 'Active', 'London'),
+(2, 'Q1', 'Inactive', 'Paris'),
+(3, 'R1', 'Active', 'New York');
+
+-- Insert sample data into the Parts table
+INSERT INTO Parts (P_Id, Pname, Colour, Weight, City) VALUES
+(1, 'P1', 'Red', 5.2, 'London'),
+(2, 'Q1', 'Blue', 3.8, 'Paris'),
+(3, 'R1', 'Green', 2.5, 'New York'),
+(4, 'S1', 'Red', 1.9, 'London'),
+(5, 'T1', 'Yellow', 6.7, 'Paris');
+
+-- Insert sample data into the Projects table
+INSERT INTO Projects (J_Id, Jname, City) VALUES
+(11, 'P1', 'London'),
+(12, 'Q1', 'Paris'),
+(13, 'R1', 'New York');
+
+
+-- Insert sample data into the Shipment table
+INSERT INTO Shipment (S_Id, P_Id, J_Id, Qty) VALUES
+(1, 1, 11, 100),
+(2, 2, 12, 75),
+(3, 3, 13, 50),
+(1, 5, 12, 25),
+(1, 4, 11, 10),
+(2, 3, 13, 5);
+
+
+1)
+mysql> SELECT DISTINCT s.S_Id
+    -> FROM Suppliers s
+    -> JOIN Shipment sh ON s.S_Id = sh.S_Id
+    -> JOIN Projects p ON sh.J_Id = p.J_Id
+    -> WHERE p.J_Id IN (11);
++------+
+| S_Id |
++------+
+|    1 |
++------+
+1 row in set (0.00 sec)
+
+
+2)
+SELECT P_ID
+FROM Shipments
+WHERE S_ID IN (
+    SELECT S_ID
+    FROM Suppliers
+    WHERE City = 'London'
+);
+
++------+
+| P_ID |
++------+
+|    1 |
+|    4 |
+|    5 |
++------+
+3 rows in set (0.00 sec)
+
+
+

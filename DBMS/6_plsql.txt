@@ -1,0 +1,110 @@
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE FUNCTION CustomerLevel(p_creditLimit double) RETURNS VARCHAR(10)
+    -> DETERMINISTIC
+    -> BEGIN
+    ->     DECLARE lvl varchar(10);
+    ->
+    ->     IF p_creditLimit > 50000 THEN
+    ->         SET lvl = 'PLATINUM';
+    ->     ELSEIF p_creditLimit <= 50000 AND p_creditLimit >= 10000 THEN
+    ->         SET lvl = 'GOLD';
+    ->     ELSEIF p_creditLimit < 10000 THEN
+    ->         SET lvl = 'SILVER';
+    ->     END IF;
+    ->
+    ->     RETURN lvl;
+    -> END$$
+
+mysql> SELECT CustomerLevel(40000);
+    -> $$
++----------------------+
+| CustomerLevel(40000) |
++----------------------+
+| GOLD                 |
++----------------------+
+1 row in set (0.00 sec)
+
+
+
+mysql> CREATE TABLE DEPT (
+    ->     DEPTNO INT PRIMARY KEY,
+    ->     DNAME VARCHAR(50) NOT NULL,
+    ->     LOC VARCHAR(40)
+    -> );
+    ->
+    -> CREATE TABLE EMP (
+    ->     EMPNO INT PRIMARY KEY,
+    ->     ENAME VARCHAR(50) NOT NULL,
+    ->     JOB CHAR(20) NOT NULL,
+    ->     MGR INT,
+    ->     FOREIGN KEY (MGR) REFERENCES EMP(EMPNO),
+    ->     HIREDATE DATE NOT NULL,
+    ->     SAL INT,
+    ->     COMM INT,
+    ->     DEPTNO INT,
+    ->     FOREIGN KEY (DEPTNO) REFERENCES DEPT(DEPTNO)
+    -> );
+    ->
+    ->
+    ->
+    ->
+    -> INSERT INTO DEPT (DEPTNO, DNAME, LOC)
+    -> VALUES
+    ->     (10, 'ACCOUNTING', 'NEW YORK'),
+    ->     (20, 'RESEARCH', 'DALLAS'),
+    ->     (30, 'SALES', 'CHICAGO'),
+    ->     (40, 'OPERATIONS', 'BOSTON');
+    ->
+    ->
+    ->
+    ->
+    -> INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+    -> VALUES
+    ->     (7369, 'SMITH', 'MANAGER', NULL, '1980-12-17', 800, NULL, 20),
+    ->     (7499, 'ALLEN', 'SALESMAN', 7369, '1981-02-20', 1600, 300, 30),
+    ->     (7521, 'WARD', 'CLERK', 7369, '1981-02-22', 1250, 500, 30);
+    -> ;
+    ->
+    -> );
+    -> CREATE TABLE DEPT (
+    ->     DEPTNO INT PRIMARY KEY,
+    ->     DNAME VARCHAR(50) NOT NULL,
+    ->     LOC VARCHAR(40)
+    -> );
+    -> DELIMITER $$
+Query OK, 0 rows affected (0.02 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+Query OK, 4 rows affected (0.05 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> select* from DEPT;
+    -> $$
++--------+------------+----------+
+| DEPTNO | DNAME      | LOC      |
++--------+------------+----------+
+|     10 | ACCOUNTING | NEW YORK |
+|     20 | RESEARCH   | DALLAS   |
+|     30 | SALES      | CHICAGO  |
+|     40 | OPERATIONS | BOSTON   |
++--------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select* from EMP;
+    -> $$
++-------+-------+----------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB      | MGR  | HIREDATE   | SAL  | COMM | DEPTNO |
++-------+-------+----------+------+------------+------+------+--------+
+|  7369 | SMITH | MANAGER  | NULL | 1980-12-17 |  800 | NULL |     20 |
+|  7499 | ALLEN | SALESMAN | 7369 | 1981-02-20 | 1600 |  300 |     30 |
+|  7521 | WARD  | CLERK    | 7369 | 1981-02-22 | 1250 |  500 |     30 |
++-------+-------+----------+------+------------+------+------+--------+
+3 rows in set (0.00 sec)
+
+*Name of the employee from the employee table
+*DynamicSQL(To write high level language) whch includes also defining delimiter

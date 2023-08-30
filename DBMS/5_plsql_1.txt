@@ -1,0 +1,171 @@
+Enter password: *****
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 19
+Server version: 8.0.31 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database new;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use new;
+Database changed
+mysql> DELIMITER $$
+mysql>
+mysql> CREATE FUNCTION CustomerLevel(p_creditLimit double) RETURNS VARCHAR(10)
+    -> DETERMINISTIC
+    -> BEGIN
+    ->     DECLARE lvl varchar(10);
+    ->
+    ->     IF p_creditLimit > 50000 THEN
+    ->         SET lvl = 'PLATINUM';
+    ->     ELSEIF p_creditLimit <= 50000 AND p_creditLimit >= 10000 THEN
+    ->         SET lvl = 'GOLD';
+    ->     ELSEIF p_creditLimit < 10000 THEN
+    ->         SET lvl = 'SILVER';
+    ->     END IF;
+    ->
+    ->     RETURN lvl;
+    -> END$$
+Query OK, 0 rows affected (0.02 sec)
+
+mysql>
+mysql> CALL CustomerLevel(40000);
+    -> $$
+ERROR 1305 (42000): PROCEDURE new.CustomerLevel does not exist
+mysql> SELECT CustomerLevel(40000);
+    -> $$
++----------------------+
+| CustomerLevel(40000) |
++----------------------+
+| GOLD                 |
++----------------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE DEPT (
+    ->     DEPTNO INT PRIMARY KEY,
+    ->     DNAME VARCHAR(50) NOT NULL,
+    ->     LOC VARCHAR(40)
+    -> );
+    ->
+    -> CREATE TABLE EMP (
+    ->     EMPNO INT PRIMARY KEY,
+    ->     ENAME VARCHAR(50) NOT NULL,
+    ->     JOB CHAR(20) NOT NULL,
+    ->     MGR INT,
+    ->     FOREIGN KEY (MGR) REFERENCES EMP(EMPNO),
+    ->     HIREDATE DATE NOT NULL,
+    ->     SAL INT,
+    ->     COMM INT,
+    ->     DEPTNO INT,
+    ->     FOREIGN KEY (DEPTNO) REFERENCES DEPT(DEPTNO)
+    -> );
+    ->
+    ->
+    ->
+    ->
+    -> INSERT INTO DEPT (DEPTNO, DNAME, LOC)
+    -> VALUES
+    ->     (10, 'ACCOUNTING', 'NEW YORK'),
+    ->     (20, 'RESEARCH', 'DALLAS'),
+    ->     (30, 'SALES', 'CHICAGO'),
+    ->     (40, 'OPERATIONS', 'BOSTON');
+    ->
+    ->
+    ->
+    ->
+    -> INSERT INTO EMP (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO)
+    -> VALUES
+    ->     (7369, 'SMITH', 'MANAGER', NULL, '1980-12-17', 800, NULL, 20),
+    ->     (7499, 'ALLEN', 'SALESMAN', 7369, '1981-02-20', 1600, 300, 30),
+    ->     (7521, 'WARD', 'CLERK', 7369, '1981-02-22', 1250, 500, 30);
+    -> ;
+    ->
+    -> );
+    -> CREATE TABLE DEPT (
+    ->     DEPTNO INT PRIMARY KEY,
+    ->     DNAME VARCHAR(50) NOT NULL,
+    ->     LOC VARCHAR(40)
+    -> );
+    -> DELIMITER $$
+Query OK, 0 rows affected (0.02 sec)
+
+Query OK, 0 rows affected (0.04 sec)
+
+Query OK, 4 rows affected (0.05 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ';
+
+);
+CREATE TABLE DEPT (
+    DEPTNO INT PRIMARY KEY,
+    DNAME VARCHAR(50) NOT ' at line 1
+mysql> select* from DEPT;
+    -> $$
++--------+------------+----------+
+| DEPTNO | DNAME      | LOC      |
++--------+------------+----------+
+|     10 | ACCOUNTING | NEW YORK |
+|     20 | RESEARCH   | DALLAS   |
+|     30 | SALES      | CHICAGO  |
+|     40 | OPERATIONS | BOSTON   |
++--------+------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> select* from EMP;
+    -> $$
++-------+-------+----------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB      | MGR  | HIREDATE   | SAL  | COMM | DEPTNO |
++-------+-------+----------+------+------------+------+------+--------+
+|  7369 | SMITH | MANAGER  | NULL | 1980-12-17 |  800 | NULL |     20 |
+|  7499 | ALLEN | SALESMAN | 7369 | 1981-02-20 | 1600 |  300 |     30 |
+|  7521 | WARD  | CLERK    | 7369 | 1981-02-22 | 1250 |  500 |     30 |
++-------+-------+----------+------+------------+------+------+--------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE deptsal as
+    -> SELECT dnumber,0 as totalsalary from DEPT;
+    -> $$
+ERROR 1054 (42S22): Unknown column 'dnumber' in 'field list'
+mysql> CREATE TABLE deptsal as
+    -> SELECT DEPTNO,0 as totalsalary from DEPT;
+    -> $$
+Query OK, 4 rows affected (0.02 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select* from deptsal;
+    -> $$
++--------+-------------+
+| DEPTNO | totalsalary |
++--------+-------------+
+|     10 |           0 |
+|     20 |           0 |
+|     30 |           0 |
+|     40 |           0 |
++--------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> create procedure updateSalary(IN paraml int)
+    -> begin
+    -> update deptsal
+    -> set totalsalary=(select sum(SAL) from EMP where DEPTNO=paraml)
+    -> where DEPTNO=paraml;
+    -> end;
+    -> $$
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> ^C
+mysql> CALL updateSalary(10);
+    -> $$
+ERROR 1048 (23000): Column 'totalsalary' cannot be null
+mysql>

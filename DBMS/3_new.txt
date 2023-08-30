@@ -1,0 +1,63 @@
+CREATE TABLE Suppliers (
+    S_Id INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Status VARCHAR(20),
+    City VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Parts (
+    P_Id INT PRIMARY KEY,
+    Pname VARCHAR(50) NOT NULL,
+    Colour VARCHAR(20),
+    Weight DECIMAL(10,2),
+    City VARCHAR(50) NOT NULL,
+    CONSTRAINT check_weight CHECK (Weight >= 0)
+);
+
+CREATE TABLE Projects (
+    J_Id INT PRIMARY KEY,
+    Jname VARCHAR(50) NOT NULL,
+    City VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Shipment (
+    S_Id INT NOT NULL,
+    P_Id INT NOT NULL,
+    J_Id INT NOT NULL,
+    Qty INT,
+    CONSTRAINT pk_shipment PRIMARY KEY (S_Id, P_Id, J_Id),
+    CONSTRAINT fk_shipment_supplier FOREIGN KEY (S_Id) REFERENCES Suppliers (S_Id),
+    CONSTRAINT fk_shipment_part FOREIGN KEY (P_Id) REFERENCES Parts (P_Id),
+    CONSTRAINT fk_shipment_project FOREIGN KEY (J_Id) REFERENCES Projects (J_Id),
+    CONSTRAINT check_qty CHECK (Qty >= 0)
+);
+
+-- Insert sample data into the Suppliers table
+INSERT INTO Suppliers (S_Id, Name, Status, City) VALUES
+(1, 'ABC Company', 'Active', 'New Delhi'),
+(2, 'XYZ Inc.', 'Inactive', 'Pune'),
+(3, 'MNO Enterprises', 'Active', 'Mumbai'),
+(4, 'PQR Corp.', 'Active', 'Lucknow');
+
+-- Insert sample data into the Parts table
+INSERT INTO Parts (P_Id, Pname, Colour, Weight, City) VALUES
+(1001, 'Widget A', 'Red', 5.2, 'New Delhi'),
+(1002, 'Widget B', 'Blue', 3.8, 'Pune'),
+(1003, 'Widget C', 'Green', 2.5, 'Mumbai'),
+(1004, 'Widget D', 'Yellow', 1.9, 'Lucknow');
+
+-- Insert sample data into the Projects table
+INSERT INTO Projects (J_Id, Jname, City) VALUES
+(2001, 'Project X', 'New Delhi'),
+(2002, 'Project Y', 'Pune'),
+(2003, 'Project Z', 'Mumbai'),
+(2004, 'Project W', 'Lucknow');
+
+-- Insert sample data into the Shipment table
+INSERT INTO Shipment (S_Id, P_Id, J_Id, Qty) VALUES
+(1, 1001, 2001, 100),
+(2, 1002, 2001, 75),
+(3, 1003, 2002, 50),
+(4, 1004, 2003, 25),
+(1, 1004, 2004, 10),
+(2, 1003, 2004, 5);
